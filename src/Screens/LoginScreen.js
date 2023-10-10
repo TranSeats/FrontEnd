@@ -27,18 +27,30 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const data = qs.stringify({ email, password });
-      console.log(data)
+      console.log(data);
+
       const response = await axios.post("/login", data, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      Alert.alert("Login Successful", response.data.messsage);
-      await AsyncStorage.setItem("token", response.data.token);
+
+      if (response.data && response.data.message === "Login successful") {
+        // Save token to AsyncStorage
+        token = await AsyncStorage.setItem("token", response.data.token);
+        console.log(response.data);
+        // Navigate to MapsScreen
+        navigation.navigate("MapsScreen");
+      } else {
+        Alert.alert(
+          "Login Failed",
+          "Invalid email or password. Please try again."
+        );
+      }
     } catch (error) {
       Alert.alert(
         "Login Failed",
-        "Invalid email or password. Please try again."
+        "An error occurred during login. Please try again."
       );
     }
   };

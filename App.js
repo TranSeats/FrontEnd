@@ -1,11 +1,12 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LogBox } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import LoginScreen from './src/Screens/LoginScreen'; // Correct import statement for LoginScreen
-import RegisterScreen from './src/Screens/RegisterScreen'; // Correct import statement for RegisterScreen
+import LoginScreen from "./src/Screens/LoginScreen"; // Correct import statement for LoginScreen
+import RegisterScreen from "./src/Screens/RegisterScreen"; // Correct import statement for RegisterScreen
+import MapsScreen from "./src/Screens/MapsScreen"; // Correct import statement for MapsScreen
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,6 @@ const theme = {
 };
 
 export default class App extends React.Component {
-
   render() {
     return (
       <NavigationContainer theme={theme}>
@@ -29,6 +29,7 @@ export default class App extends React.Component {
           {/* ... other screens ... */}
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen name="MapsScreen" component={MapsScreen} />
           {/* ... other screens ... */}
         </Stack.Navigator>
       </NavigationContainer>
@@ -39,8 +40,8 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
