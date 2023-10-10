@@ -17,34 +17,42 @@ import axios from "../api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import qs from "qs";
 import { useNavigation } from "@react-navigation/native";
-import RegisterScreen from "./RegisterScreen"; // Adjust the path as needed
 
-const Login = () => {
+const Register = ({ navigation }) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const data = qs.stringify({ email, password });
-      console.log(data)
-      const response = await axios.post("/login", data, {
+      const data = qs.stringify({ name, email, password }, { skipNulls: true });
+      console.log(data);
+
+      const response = await axios.post("/register", data, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      Alert.alert("Login Successful", response.data.messsage);
-      await AsyncStorage.setItem("token", response.data.token);
+
+      if (response.data && response.data.message === "User Created") {
+        Alert.alert("Register Successful", "User registered successfully!");
+      } else {
+        Alert.alert(
+          "Registration Failed",
+          "An error occurred during registration."
+        );
+      }
     } catch (error) {
+      console.error("Axios network error:", error);
       Alert.alert(
-        "Login Failed",
-        "Invalid email or password. Please try again."
+        "Registration Failed",
+        "An error occurred during registration. Please check your network connection and try again."
       );
     }
   };
 
-  const handleRegisterPress = () => {
-    navigation.navigate("RegisterScreen"); // Correct navigation to RegisterScreen
+  const handleLoginPress = () => {
+    navigation.navigate("LoginScreen"); // Correct navigation to RegisterScreen
   };
 
   return (
@@ -56,7 +64,7 @@ const Login = () => {
       >
         <View style={styles.backgroundImageContainer}>
           <Image
-            source={require("../../assets/Saly-6.png")}
+            source={require("../../assets/Saly-7.png")}
             style={styles.backgroundImage}
           />
           <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -71,8 +79,17 @@ const Login = () => {
               />
             </View>
             <View style={styles.loginTextContainer}>
-              <Text style={styles.loginText}>LOGIN</Text>
+              <Text style={styles.loginText}>REGISTER</Text>
               <View style={styles.line} />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholderTextColor="#2196F3"
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+              />
+              <Text style={styles.inputLabel}>Name</Text>
             </View>
             <View style={styles.inputContainer}>
               <TextInput
@@ -93,14 +110,17 @@ const Login = () => {
               />
               <Text style={styles.inputLabel}>Password</Text>
             </View>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleRegister}
+            >
+              <Text style={styles.loginButtonText}>Register</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.registerContainer}
-              onPress={handleRegisterPress}
+              onPress={handleLoginPress}
             >
-              <Text style={styles.registerText}>Register</Text>
+              <Text style={styles.registerText}>Login</Text>
               <Text style={styles.boldText}> Here!</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -189,7 +209,7 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     position: "relative",
-    top: 5,
+    top: 10,
     right: 0,
     height: 50,
     flexDirection: "row",
@@ -213,7 +233,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "absolute", // Use absolute positioning
-    bottom: -450, // Position at the bottom
+    bottom: -490, // Position at the bottom
   },
   registerButton: {
     width: "100%",
@@ -231,4 +251,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Register;
