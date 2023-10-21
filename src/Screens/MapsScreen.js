@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Client } from "react-native-paho-mqtt";
 
-const initialRegion = {
+const initialMaps = {
   latitude: -6.363338,
   longitude: 106.82484,
   latitudeDelta: 0.0922,
@@ -33,7 +33,7 @@ const mqttClientOptions = {
 
 
 const App = () => {
-  const [region, setRegion] = useState(initialRegion);
+  const [region, setRegion] = useState(initialMaps);
   const [markerData, setMarkerData] = useState(null);
   const [mqttClient, setMqttClient] = useState(null);
 
