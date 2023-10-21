@@ -36,6 +36,7 @@ const Register = ({ navigation }) => {
 
       if (response.data && response.data.message === "User Created") {
         Alert.alert("Register Successful", "User registered successfully!");
+        navigation.navigate("LoginScreen");
       } else {
         Alert.alert(
           "Registration Failed",
