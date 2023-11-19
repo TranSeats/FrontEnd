@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Client } from "react-native-paho-mqtt";
+// import SvgUri from "react-native-svg-uri"; // Import SvgUri from react-native-svg-uri
+import customMarkerImage from "../../assets/train.png";
 
-const initialRegion = {
+const initialMaps = {
   latitude: -6.363338,
   longitude: 106.82484,
   latitudeDelta: 0.0922,
@@ -30,10 +32,8 @@ const mqttClientOptions = {
   password: "TranseatsClient2023",
 };
 
-
-
 const App = () => {
-  const [region, setRegion] = useState(initialRegion);
+  const [region, setRegion] = useState(initialMaps);
   const [markerData, setMarkerData] = useState(null);
   const [mqttClient, setMqttClient] = useState(null);
 
@@ -76,7 +76,7 @@ const App = () => {
         initialRegion={region}
         showsUserLocation={true}
       >
-        {markerData && (
+        {markerData ? (
           <Marker
             coordinate={{
               latitude: parseFloat(markerData.latitude),
@@ -84,7 +84,28 @@ const App = () => {
             }}
             title={markerData.Pesan}
             description={`Crowd Level: ${markerData.crowd_level}`}
-          />
+          >
+            {/* Use Image for custom SVG marker */}
+            <Image
+              source={customMarkerImage} // Provide the path to your PNG image
+              style={{ width: 40, height: 40 }}
+            />
+          </Marker>
+        ) : (
+          <Marker
+            coordinate={{
+              latitude: region.latitude,
+              longitude: region.longitude,
+            }}
+            title="Default Title"
+            description="Default Description"
+          >
+            {/* Use Image for custom SVG marker */}
+            <Image
+              source={customMarkerImage} // Provide the path to your PNG image
+              style={{ width: 40, height: 40 }}
+            />
+          </Marker>
         )}
       </MapView>
     </View>
