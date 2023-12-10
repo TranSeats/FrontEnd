@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Text } from "react-native";
+import { StyleSheet, View, Image, Text, Modal, TouchableHighlight } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import { Client } from "react-native-paho-mqtt";
 // import SvgUri from "react-native-svg-uri"; // Import SvgUri from react-native-svg-uri
@@ -94,6 +94,16 @@ const App = () => {
 
   }, [region, mqttClientOptions, markerData]);
 
+  const [isHelpModalVisible, setHelpModalVisible] = useState(false);
+
+  const handleHelpPress = () => {
+    setHelpModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setHelpModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -114,10 +124,10 @@ const App = () => {
               {markerData.prediction.map((prediction) => (
                 <View style={{ padding: 10 }} key={prediction.carriageId}>
                   <Text style={{ fontWeight: "bold" }}>
-                    Carriage ID: {prediction.carriageId}
+                    Nomor gerbong: {prediction.carriageId}
                   </Text>
-                  <Text>Crowd Level: {prediction.crowd_level}</Text>
-                  <Text>No. of Person: {prediction.person}</Text>
+                  <Text>Tingkat keramaian: {prediction.crowd_level}</Text>
+                  <Text>Jumlah orang: {prediction.person}</Text>
                 </View>
               ))}
             </Callout>
@@ -132,6 +142,51 @@ const App = () => {
           ></Marker>
         )}
       </MapView>
+      
+  
+{/* Help Button */}
+<View style={styles.helpButtonContainer}>
+  <TouchableHighlight onPress={handleHelpPress} underlayColor="transparent">
+    {/* Replace Text with Image */}
+    <Image
+      source={require('../../assets/helpbtn.png')} // Replace with the correct path to your vector image
+      style={styles.helpButtonImage}
+    />
+  </TouchableHighlight>
+</View>
+
+
+
+{/* ... (rest of your existing code) */}
+
+      {/* Help Modal */}
+      <Modal
+  animationType="slide"
+  transparent={true}
+  visible={isHelpModalVisible}
+  onRequestClose={closeModal}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      {/* Title */}
+      <Text style={styles.modalTitle}>Kategori Tingkat Kearamaian</Text>
+
+      {/* Content */}
+      <Text style={styles.modalText}>
+        0-30: Sepi, banyak tempat duduk yang kosong{"\n\n"}
+        30-60: Cukup sepi, terdapat tempat duduk yang kosong{"\n\n"}
+        60-120: Cukup padat, tidak ada tempat duduk, namun masih terdapat ruang yang cukup{"\n\n"}
+        120-180: Padat, tidak ada tempat duduk, dan tidak banyak ruang{"\n\n"}
+        180-250: Sangat padat, gerbong hampir penuh
+      </Text>
+
+      {/* Close Button */}
+      <TouchableHighlight style={styles.modalCloseButton} onPress={closeModal}>
+        <Text style={styles.modalCloseButtonText}>Close</Text>
+      </TouchableHighlight>
+    </View>
+  </View>
+</Modal>
       {showInfoWindow && renderInfoWindow()}
     </View>
   );
@@ -153,6 +208,61 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderRadius: 5,
     zIndex: 1000, // Ensure the info window is above the map
+  },
+  helpButtonContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    zIndex: 1001,
+  },
+
+  helpButtonImage: {
+    width: 30, // Adjust the width as needed
+    height: 30, // Adjust the height as needed
+  },
+  helpButtonContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    zIndex: 1001,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+  },
+
+  // Inside the styles object
+modalText: {
+  fontSize: 12, // You can adjust the font size as needed
+  lineHeight: 18, // You can also adjust the line height for better readability
+},
+
+modalTitle: {
+  fontSize: 16, // Adjust the font size as needed
+  fontWeight: "bold",
+  textAlign: "center",
+  marginBottom: 10, // Adjust spacing as needed
+},
+  modalCloseButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: "blue",
+    borderRadius: 5,
+    alignSelf: "flex-end",
+  },
+
+  modalCloseButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
