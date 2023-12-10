@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { StyleSheet, View, Image, Text } from "react-native";
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import { Client } from "react-native-paho-mqtt";
 // import SvgUri from "react-native-svg-uri"; // Import SvgUri from react-native-svg-uri
 import customMarkerImage from "../../assets/train.png";
@@ -24,7 +24,7 @@ const myStorage = {
 
 const mqttClientOptions = {
   uri: "ws://35.239.90.168:8083/mqtt",
-  clientId: "mqttx_75679296",
+  clientId: "mqttx_f31296e1",
   keepalive: 60,
   clean: true,
   storage: myStorage,
@@ -36,6 +36,17 @@ const App = () => {
   const [region, setRegion] = useState(initialMaps);
   const [markerData, setMarkerData] = useState(null);
   const [mqttClient, setMqttClient] = useState(null);
+  const [desc, setDesc] = useState(null);
+  const [showInfoWindow, setShowInfoWindow] = useState(false);
+
+  const renderInfoWindow = () => {
+    return (
+      <View style={styles.infoWindow}>
+        <Text>{desc}</Text>
+      </View>
+    );
+  };
+
 
   useEffect(() => {
     const client = new Client(mqttClientOptions);
@@ -62,16 +73,31 @@ const App = () => {
       });
     });
 
+    const generateDescription = () => {
+      let description = "";
+      if (markerData && markerData.prediction) {
+        for (let i = 0; i < markerData.prediction.length; i++) {
+          description += `Carriage ID: ${markerData.prediction[i].carriageId}, Crowd Level: ${markerData.prediction[i].crowd_level}, No. of Person: ${markerData.prediction[i].person}\n`;
+        }
+      }
+      setDesc(description);
+    };
+
+    if (markerData) {
+      generateDescription();
+    }
+
     return () => {
       if (client.isConnected()) {
-        client.disconnect();
       }
     };
-  }, [region, mqttClientOptions]);
+
+  }, [region, mqttClientOptions, markerData]);
 
   return (
     <View style={styles.container}>
       <MapView
+        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={region}
         showsUserLocation={true}
@@ -82,14 +108,19 @@ const App = () => {
               latitude: parseFloat(markerData.latitude),
               longitude: parseFloat(markerData.longitude),
             }}
-            title={markerData.Pesan}
-            description={`Crowd Level: ${markerData.crowd_level}`}
+            title={"Train 1"}
           >
-            {/* Use Image for custom SVG marker */}
-            <Image
-              source={customMarkerImage} // Provide the path to your PNG image
-              style={{ width: 40, height: 40 }}
-            />
+            <Callout>
+              {markerData.prediction.map((prediction) => (
+                <View style={{ padding: 10 }} key={prediction.carriageId}>
+                  <Text style={{ fontWeight: "bold" }}>
+                    Carriage ID: {prediction.carriageId}
+                  </Text>
+                  <Text>Crowd Level: {prediction.crowd_level}</Text>
+                  <Text>No. of Person: {prediction.person}</Text>
+                </View>
+              ))}
+            </Callout>
           </Marker>
         ) : (
           <Marker
@@ -98,16 +129,10 @@ const App = () => {
               longitude: region.longitude,
             }}
             title="Default Title"
-            description="Default Description"
-          >
-            {/* Use Image for custom SVG marker */}
-            <Image
-              source={customMarkerImage} // Provide the path to your PNG image
-              style={{ width: 40, height: 40 }}
-            />
-          </Marker>
+          ></Marker>
         )}
       </MapView>
+      {showInfoWindow && renderInfoWindow()}
     </View>
   );
 };
@@ -119,6 +144,15 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+  },
+  infoWindow: {
+    position: "absolute",
+    backgroundColor: "white",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+    zIndex: 1000, // Ensure the info window is above the map
   },
 });
 

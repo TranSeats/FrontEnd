@@ -36,9 +36,8 @@ const Login = () => {
       });
 
       if (response.data && response.data.message === "Login successful") {
-        // Save token to AsyncStorage
-        token = await AsyncStorage.setItem("token", response.data.token);
         console.log(response.data);
+        Alert.alert("Login Successful", "User logged in successfully!");
         // Navigate to MapsScreen
         navigation.navigate("MapsScreen");
       } else {

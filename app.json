@@ -15,16 +15,38 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.grandier.TranseatsFrontend"
     },
     "android": {
+      "config": {
+          "googleMaps": {
+          "apiKey": "AIzaSyBdxO-9pZWD-y1tMwtgld7GJOXuoi4TOJA"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.grandier.TranseatsFrontend"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f0199f8b-ce21-4e5e-aa07-67428979f7f4"
+      }
+    },
+     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ]
   }
 }
