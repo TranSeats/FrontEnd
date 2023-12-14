@@ -220,12 +220,14 @@ const styles = StyleSheet.create({
     width: 30, // Adjust the width as needed
     height: 30, // Adjust the height as needed
   },
-  helpButtonContainer: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-    zIndex: 1001,
-  },
+  // Change the styles for helpButtonContainer
+helpButtonContainer: {
+  position: "absolute",
+  bottom: 20, // Move it to the bottom
+  right: 20,
+  zIndex: 1001,
+},
+
   modalContainer: {
     flex: 1,
     justifyContent: "center",
